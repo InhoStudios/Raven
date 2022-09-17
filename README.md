@@ -4,4 +4,4 @@ Using AdHawk eye tracing technology, we developed a product that is able to foll
 
 This technology is aimed towards users with learning disabilities, reduced vision and those who are learning a language. It is suitable for users of all demographics.
 
-This technology implements eye tracing with optical character recognition (OCR) and text to speech automation.
+Raven implements eye tracing with optical character recognition (OCR) and text to speech automation.
