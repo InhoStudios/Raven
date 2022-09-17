@@ -4,8 +4,9 @@ import pyttsx3
 # initialisation
 engine = pyttsx3.init()
 
-array = "Testing"
+#input of string from ocr
+phrase = "Testing"
   
 # testing
-engine.say(array)
+engine.say(phrase)
 engine.runAndWait()
