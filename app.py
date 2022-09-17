@@ -2,8 +2,20 @@ import ocr
 import cv2
 
 if __name__ == "__main__":
-    img = cv2.imread('imgs/textimg.png')
-    cv2.imshow("input", img)
-    img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    cap = cv2.VideoCapture(0)
 
-    ocr.get_text_coord_pairs(img_rgb)
+    if (not cap.isOpened()):
+        raise IOError("Cannot open webcam")
+
+    while True:
+        ret, frame = cap.read()
+        frame = cv2.resize(frame, None, fx=0.5, fy=0.5,interpolation=cv2.INTER_AREA)
+        cv2.imshow('Input', frame)
+
+        c = cv2.waitKey(1)
+        if c == 27:
+            break
+        print(ocr.get_text_coord_pairs(frame))
+
+    cap.release()
+    cv2.destroyAllWindows()
