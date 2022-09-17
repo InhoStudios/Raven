@@ -40,6 +40,9 @@ class Frontend:
 
         # Flags the frontend as not connected yet
         self.connected = False
+        
+        #Manually set parallax error for gaze
+        api.set_camera_user_settings(adhawkapi.CameraUserSettings.GAZE_DEPTH, 0.5)
 
     def shutdown(self):
         ''' Shuts down the backend connection '''
