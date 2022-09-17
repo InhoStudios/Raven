@@ -2,9 +2,13 @@ import cv2
 import pytesseract
 from pytesseract import Output
 
-img = cv2.imread('imgs/textimg.png')
-cv2.imshow("input", img)
-img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+def get_text_coord_pairs(opencvimg):
+    d = pytesseract.image_to_data(opencvimg, output_type=Output.DICT)
+    n_tokens = len(d['text'])
+    for i in range(n_tokens):
+        if int(d['conf'][i] > 60):
+            (x, y, w, h) = (d['left'][i], d['top'][i], d['width'][i], d['height'][i])
+            opencvimg = cv2.rectangle(opencvimg, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-d = pytesseract.image_to_string(img_rgb)
-print(d)
+    cv2.imshow('img', opencvimg)
+    cv2.waitKey(0)
