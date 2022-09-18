@@ -15,11 +15,13 @@ from PySide2 import QtCore, QtGui, QtWidgets
 import adhawkapi
 import adhawkapi.frontend
 from adhawkapi import MarkerSequenceMode, PacketType
+import numpy as np
+
+import pyttsx3
 
 
 MARKER_SIZE = 20  # Diameter in pixels of the gaze marker
 MARKER_COLOR = (0, 250, 50)  # Colour of the gaze marker
-
 
 class Frontend:
     ''' Frontend communicating with the backend '''
@@ -40,9 +42,6 @@ class Frontend:
 
         # Flags the frontend as not connected yet
         self.connected = False
-        
-        #Manually set parallax error for gaze
-        api.set_camera_user_settings(adhawkapi.CameraUserSettings.GAZE_DEPTH, 0.5)
 
     def shutdown(self):
         ''' Shuts down the backend connection '''
@@ -173,8 +172,15 @@ class GazeViewer(QtWidgets.QWidget):
     def _handle_video_stream(self, _gaze_timestamp, _frame_index, image_buf, _frame_timestamp):
 
         # Create a new Qt pixmap and load the frame's data into it
+        image = cv2.imdecode(np.frombuffer(image_buf, dtype=np.uint8), 1)
+
         qt_img = QtGui.QPixmap()
         qt_img.loadFromData(image_buf, 'JPEG')
+
+        word = ocr.get_word_by_coords(self._gaze_coordinates[0], self._gaze_coordinates[1], image)
+        print(word)
+        engine.say(word)
+        engine.runAndWait()
 
         # Get the image's size. If self._frame_size has not yet been initialized, we set its values to the frame size.
         size = qt_img.size().toTuple()
@@ -223,7 +229,9 @@ def main():
 
     main_window.show()
     sys.exit(app.exec_())
+    engine.stop()
 
 
 if __name__ == '__main__':
+    engine = pyttsx3.init() 
     main()
