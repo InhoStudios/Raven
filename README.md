@@ -1,4 +1,4 @@
-# htn2022
+# Raven by Affinity
 
 Using AdHawk eye tracing technology, we developed a product that is able to follow a user's eye movement and convert the text they see into audio that is played back to the user.
 
