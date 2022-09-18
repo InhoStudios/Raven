@@ -6,22 +6,12 @@ import math
 
 pytesseract.pytesseract.tesseract_cmd = "C:\\Program Files\\Tesseract-OCR\\tesseract.exe"
 
-def get_text_coord_pairs(opencvimg):
-    d = pytesseract.image_to_data(opencvimg, output_type=Output.DICT)
-    n_tokens = len(d['text'])
-    word_coords = []
-    for i in range(n_tokens):
-        if (int(d['conf'][i] > 60)):
-            word = {'x': d['left'][i], 'y': d['top'][i], 'w': d['width'][i], 'h': d['height'][i], 'txt': d['text'][i]}
-            if (word['txt'] != ""):
-                word_coords.append(word)
-    return word_coords
-
 def get_word_by_coords(x, y, img, size=250):
     if math.isnan(x) or math.isnan(y):
         return ""
-    img_crop = get_grayscale(img[int(y):int(y+size), int(x):int(x+size)])
-    return pytesseract.image_to_string(img)
+        # [max(0, int(y-size)):int(y+size), max(0, int(x-size)):int(x+size)]
+    img_crop = thresholding(get_grayscale(img))
+    return pytesseract.image_to_string(img_crop)
 
 # preprocessing functions from nanonets.com
 def get_grayscale(image):

@@ -19,9 +19,8 @@ import numpy as np
 
 import pyttsx3
 
-
 MARKER_SIZE = 20  # Diameter in pixels of the gaze marker
-MARKER_COLOR = (0, 250, 50)  # Colour of the gaze marker
+MARKER_COLOR = (250, 0, 0)  # Colour of the gaze marker
 
 class Frontend:
     ''' Frontend communicating with the backend '''
@@ -111,6 +110,7 @@ class GazeViewer(QtWidgets.QWidget):
 
     def __init__(self):
         QtWidgets.QWidget.__init__(self)
+        self._image = None
         self.setWindowTitle('Gaze in image example')
 
         self.text_label = QtWidgets.QLabel('Q: run a Quick Start,  C: run a Calibration')
@@ -134,7 +134,7 @@ class GazeViewer(QtWidgets.QWidget):
         # in known positions
         self.calibration_shortcut = QtWidgets.QShortcut(QtGui.QKeySequence('c'), self)
         self.calibration_shortcut.activated.connect(self.calibrate)
-
+        
         # Instantiate and start a video receiver with self._handle_video_stream as the handler for new frames
         self._video_receiver = adhawkapi.frontend.VideoReceiver()
         self._video_receiver.frame_received_event.add_callback(self._handle_video_stream)
@@ -143,6 +143,7 @@ class GazeViewer(QtWidgets.QWidget):
         # Instantiate a Frontend object. We give it the address of the video receiver, so the api's video stream will
         # be sent to it.
         self.frontend = Frontend(self._handle_gaze_in_image_stream, self._video_receiver.address)
+        self.engine = pyttsx3.init()
 
         # Initialize the gaze coordinates to dummy values for now
         self._gaze_coordinates = (0, 0)
@@ -174,13 +175,13 @@ class GazeViewer(QtWidgets.QWidget):
         # Create a new Qt pixmap and load the frame's data into it
         image = cv2.imdecode(np.frombuffer(image_buf, dtype=np.uint8), 1)
 
+        phrase = ocr.get_word_by_coords(self._gaze_coordinates[0], self._gaze_coordinates[1], image)
+        print(phrase)
+        self.engine.say(phrase)
+        self.engine.runAndWait()
+
         qt_img = QtGui.QPixmap()
         qt_img.loadFromData(image_buf, 'JPEG')
-
-        word = ocr.get_word_by_coords(self._gaze_coordinates[0], self._gaze_coordinates[1], image)
-        print(word)
-        engine.say(word)
-        engine.runAndWait()
 
         # Get the image's size. If self._frame_size has not yet been initialized, we set its values to the frame size.
         size = qt_img.size().toTuple()
@@ -229,9 +230,6 @@ def main():
 
     main_window.show()
     sys.exit(app.exec_())
-    engine.stop()
-
 
 if __name__ == '__main__':
-    engine = pyttsx3.init() 
     main()

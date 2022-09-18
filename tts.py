@@ -10,3 +10,7 @@ phrase = "Testing"
 # testing
 engine.say(phrase)
 engine.runAndWait()
+
+def speak(string):
+    engine.say(string)
+    engine.run
