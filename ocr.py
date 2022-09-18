@@ -10,7 +10,7 @@ def get_word_by_coords(x, y, img, size=250):
     if math.isnan(x) or math.isnan(y):
         return ""
         # [max(0, int(y-size)):int(y+size), max(0, int(x-size)):int(x+size)]
-    img_crop = thresholding(get_grayscale(img))
+    img_crop = get_grayscale(img)
     return pytesseract.image_to_string(img_crop)
 
 # preprocessing functions from nanonets.com
